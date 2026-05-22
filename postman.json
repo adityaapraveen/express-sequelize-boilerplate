@@ -1,259 +1,535 @@
 {
 	"info": {
-		"_postman_id": "667c4085-5e85-4233-8e79-097c8a3faff7",
-		"name": "express-sequelize-boilerplate",
+		"name": "Splitwise MVP API PropSoch Assignment",
+		"description": "Postman collection to test user, expense, and balance endpoints for the Splitwise MVP backend. Set the base_url variable if your server runs on a different port.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3333",
+			"type": "string"
+		},
+		{
+			"key": "user1_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "user2_id",
+			"value": "2",
+			"type": "string"
+		},
+		{
+			"key": "user3_id",
+			"value": "3",
+			"type": "string"
+		},
+		{
+			"key": "expense_id",
+			"value": "1",
+			"type": "string"
+		}
+	],
 	"item": [
 		{
-			"name": "user",
+			"name": "Health Check",
 			"item": [
 				{
-					"name": "add",
+					"name": "API Root",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								""
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Create User 1 - Aditya",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status is 201 or 200', function () {",
+									"  pm.expect([200, 201]).to.include(pm.response.code);",
+									"});",
+									"const json = pm.response.json();",
+									"const id = json.data?.id || json.id;",
+									"if (id) pm.collectionVariables.set('user1_id', id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Gabriel Faria\",\n    \"email\": \"gabriel@gmail.com\",\n    \"password\": \"123456\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"name\": \"Aditya\",\n  \"email\": \"aditya@example.com\",\n  \"password\": \"password123\",\n  \"default_currency\": \"INR\"\n}"
 						},
 						"url": {
-							"raw": "{{server_url}}/user",
+							"raw": "{{base_url}}/users",
 							"host": [
-								"{{server_url}}"
+								"{{base_url}}"
 							],
 							"path": [
-								"user"
+								"users"
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
-					"name": "update",
+					"name": "Create User 2 - Rahul",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status is 201 or 200', function () {",
+									"  pm.expect([200, 201]).to.include(pm.response.code);",
+									"});",
+									"const json = pm.response.json();",
+									"const id = json.data?.id || json.id;",
+									"if (id) pm.collectionVariables.set('user2_id', id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Gabriel Alves de Faria\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"name\": \"Rahul\",\n  \"email\": \"rahul@example.com\",\n  \"password\": \"password123\",\n  \"default_currency\": \"INR\"\n}"
 						},
 						"url": {
-							"raw": "{{server_url}}/user",
+							"raw": "{{base_url}}/users",
 							"host": [
-								"{{server_url}}"
+								"{{base_url}}"
 							],
 							"path": [
-								"user"
+								"users"
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
-					"name": "get",
+					"name": "Create User 3 - Karan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status is 201 or 200', function () {",
+									"  pm.expect([200, 201]).to.include(pm.response.code);",
+									"});",
+									"const json = pm.response.json();",
+									"const id = json.data?.id || json.id;",
+									"if (id) pm.collectionVariables.set('user3_id', id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Karan\",\n  \"email\": \"karan@example.com\",\n  \"password\": \"password123\",\n  \"default_currency\": \"INR\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get All Users",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/user",
+							"raw": "{{base_url}}/users",
 							"host": [
-								"{{server_url}}"
+								"{{base_url}}"
 							],
 							"path": [
-								"user"
+								"users"
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
-					"name": "find",
+					"name": "Get User Profile",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/user/1",
+							"raw": "{{base_url}}/users/{{user1_id}}",
 							"host": [
-								"{{server_url}}"
+								"{{base_url}}"
 							],
 							"path": [
-								"user",
-								"1"
+								"users",
+								"{{user1_id}}"
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
-					"name": "delete",
+					"name": "Update User Currency",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"default_currency\": \"USD\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/{{user1_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user1_id}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Update User Email and Currency",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"aditya.updated@example.com\",\n  \"default_currency\": \"INR\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/{{user1_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user1_id}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete User 3 Optional",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/user/2",
+							"raw": "{{base_url}}/users/{{user3_id}}",
 							"host": [
-								"{{server_url}}"
+								"{{base_url}}"
 							],
 							"path": [
-								"user",
-								"2"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "addAddress",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
+								"users",
+								"{{user3_id}}"
 							]
 						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"address\": {\n        \"city\": \"Itajubá\",\n        \"state\": \"Minas Gerais\",\n        \"country\": \"Brasil\",\n        \"neighborhood\": \"Avenida\"\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{server_url}}/user/address",
-							"host": [
-								"{{server_url}}"
-							],
-							"path": [
-								"user",
-								"address"
-							]
-						}
-					},
-					"response": []
+						"description": "Only run this after expense tests. If you delete User 3 before creating expenses, the sample expense with members [1,2,3] will fail."
+					}
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
-			"name": "login",
+			"name": "Expenses",
 			"item": [
 				{
-					"name": "login",
+					"name": "Create Expense - Dinner",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Expense created', function () {",
+									"  pm.expect([200, 201]).to.include(pm.response.code);",
+									"});",
+									"const json = pm.response.json();",
+									"const id = json.data?.id || json.id;",
+									"if (id) pm.collectionVariables.set('expense_id', id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\":\"gabriel@gmail.com\",\n    \"password\":\"123456\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"name\": \"Dinner\",\n  \"value\": 3000,\n  \"currency\": \"INR\",\n  \"date\": \"2026-05-22\",\n  \"paid_by_user_id\": {{user1_id}},\n  \"created_by_user_id\": {{user1_id}},\n  \"members\": [{{user1_id}}, {{user2_id}}, {{user3_id}}],\n }"
 						},
 						"url": {
-							"raw": "{{server_url}}/login",
+							"raw": "{{base_url}}/expenses",
 							"host": [
-								"{{server_url}}"
+								"{{base_url}}"
 							],
 							"path": [
-								"login"
+								"expenses"
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
-					"name": "logout",
+					"name": "Create Expense - Taxi Paid By User 2",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Taxi\",\n  \"value\": 900,\n  \"currency\": \"INR\",\n  \"date\": \"2026-05-23\",\n  \"paid_by_user_id\": {{user2_id}},\n  \"created_by_user_id\": {{user2_id}},\n  \"members\": [{{user1_id}}, {{user2_id}}],\n }"
 						},
+						"url": {
+							"raw": "{{base_url}}/expenses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"expenses"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Expenses For User 1",
+					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{server_url}}/logout",
+							"raw": "{{base_url}}/expenses?user_id={{user1_id}}",
 							"host": [
-								"{{server_url}}"
+								"{{base_url}}"
 							],
 							"path": [
-								"logout"
+								"expenses"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "{{user1_id}}"
+								}
 							]
 						}
-					},
-					"response": []
-				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "address",
-			"item": [
+					}
+				},
 				{
-					"name": "add",
+					"name": "Get Expenses For User 2",
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
+						"url": {
+							"raw": "{{base_url}}/expenses?user_id={{user2_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"expenses"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "{{user2_id}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Single Expense",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/expenses/{{expense_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"expenses",
+								"{{expense_id}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Expense",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"city\": \"Itajubá\",\n    \"state\": \"Minas Gerais\",\n    \"country\": \"Brasil\",\n    \"neighborhood\": \"Avenida\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"name\": \"Updated Dinner\",\n  \"value\": 3600,\n  \"currency\": \"INR\",\n  \"date\": \"2026-05-22\",\n  \"paid_by_user_id\": {{user1_id}},\n  \"members\": [{{user1_id}}, {{user2_id}}, {{user3_id}}],\n }"
 						},
 						"url": {
-							"raw": "{{server_url}}/address",
+							"raw": "{{base_url}}/expenses/{{expense_id}}",
 							"host": [
-								"{{server_url}}"
+								"{{base_url}}"
 							],
 							"path": [
-								"address"
+								"expenses",
+								"{{expense_id}}"
 							]
 						}
-					},
-					"response": []
+					}
+				},
+				{
+					"name": "Delete Expense Optional",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/expenses/{{expense_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"expenses",
+								"{{expense_id}}"
+							]
+						},
+						"description": "Run this only after testing balances, otherwise the created expense will not be available for balance testing."
+					}
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
+		},
+		{
+			"name": "Balances",
+			"item": [
+				{
+					"name": "Get Balances For User 1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/balances?user_id={{user1_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"balances"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "{{user1_id}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Balances For User 2",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/balances?user_id={{user2_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"balances"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "{{user2_id}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Balances For User 3",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/balances?user_id={{user3_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"balances"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "{{user3_id}}"
+								}
+							]
+						}
+					}
+				}
+			]
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

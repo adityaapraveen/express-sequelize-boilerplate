@@ -1,90 +1,113 @@
 import * as Yup from "yup";
-import Address from "../models/Address";
 import User from "../models/User";
-import {
-  BadRequestError,
-  UnauthorizedError,
-  ValidationError,
-} from "../utils/ApiError";
-
-//Yup is a JavaScript schema builder for value parsing and validation.
 
 let userController = {
   add: async (req, res, next) => {
     try {
       const schema = Yup.object().shape({
-        name: Yup.string().required(),
-        email: Yup.string().email().required(),
-        password: Yup.string().required().min(6),
+        name: Yup.string().required("Name is required"),
+        email: Yup.string()
+          .email("Email must be valid")
+          .required("Email is required"),
+        password: Yup.string()
+          .required("Password is required")
+          .min(6, "Password must be at least 6 characters"),
+        default_currency: Yup.string()
+          .length(3, "Currency mustbe INR, USD, EUR")
+          .default("INR"),
       });
 
-      if (!(await schema.isValid(req.body))) throw new ValidationError();
+      try {
+        await schema.validate(req.body, {
+          abortEarly: false,
+          stripUnknown: true,
+        });
+      } catch (error) {
+        return res.status(400).json({
+          message: "req body validation failed",
+          errors: error.errors,
+        });
+      }
 
-      const { email } = req.body;
+      const { name, email, password, default_currency = "INR" } = req.body;
 
       const userExists = await User.findOne({
         where: { email },
       });
 
-      if (userExists) throw new BadRequestError();
-
-      const user = await User.create(req.body);
-
-      return res.status(200).json(user);
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  addAddress: async (req, res, next) => {
-    try {
-      const { body, userId } = req;
-
-      const schema = Yup.object().shape({
-        city: Yup.string().required(),
-        state: Yup.string().required(),
-        neighborhood: Yup.string().required(),
-        country: Yup.string().required(),
-      });
-
-      if (!(await schema.isValid(body.address))) throw new ValidationError();
-
-      const user = await User.findByPk(userId);
-
-      let address = await Address.findOne({
-        where: { ...body.address },
-      });
-
-      if (!address) {
-        address = await Address.create(body.address);
+      if (userExists) {
+        return res.status(409).json({
+          message: "User with this email already exists",
+        });
       }
 
-      await user.addAddress(address);
+      const user = await User.create({
+        name,
+        email,
+        password,
+        default_currency: default_currency.toUpperCase(),
+      });
 
-      return res.status(200).json(user);
+      return res.status(201).json({
+        message: "User created successfully",
+        data: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          default_currency: user.default_currency,
+          created_at: user.created_at,
+          updated_at: user.updated_at,
+        },
+      });
     } catch (error) {
       next(error);
     }
   },
-
   get: async (req, res, next) => {
     try {
-      const users = await User.findAll();
+      const users = await User.findAll({
+        attributes: [
+          "id",
+          "name",
+          "email",
+          "default_currency",
+          "created_at",
+          "updated_at",
+        ],
+        order: [["created_at", "DESC"]],
+      });
 
-      return res.status(200).json(users);
+      return res.status(200).json({
+        data: users,
+      });
     } catch (error) {
       next(error);
     }
   },
-
   find: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const user = await User.findByPk(id);
 
-      if (!user) throw new BadRequestError();
+      const user = await User.findByPk(id, {
+        attributes: [
+          "id",
+          "name",
+          "email",
+          "default_currency",
+          "created_at",
+          "updated_at",
+        ],
+      });
 
-      return res.status(200).json(user);
+      if (!user) {
+        return res.status(404).json({
+          message: "User not found",
+        });
+      }
+
+      return res.status(200).json({
+        data: user,
+      });
     } catch (error) {
       next(error);
     }
@@ -94,46 +117,73 @@ let userController = {
     try {
       const schema = Yup.object().shape({
         name: Yup.string(),
-        email: Yup.string().email(),
-        oldPassword: Yup.string().min(6),
-        password: Yup.string()
-          .min(6)
-          .when("oldPassword", (oldPassword, field) => {
-            if (oldPassword) {
-              return field.required();
-            } else {
-              return field;
-            }
-          }),
-        confirmPassword: Yup.string().when("password", (password, field) => {
-          if (password) {
-            return field.required().oneOf([Yup.ref("password")]);
-          } else {
-            return field;
-          }
-        }),
+        email: Yup.string().email("Email must be valid"),
+        default_currency: Yup.string().length(
+          3,
+          "Currency must be INR, USD, EUR"
+        ),
       });
 
-      if (!(await schema.isValid(req.body))) throw new ValidationError();
+      try {
+        await schema.validate(req.body, {
+          abortEarly: false,
+          stripUnknown: true,
+        });
+      } catch (error) {
+        return res.status(400).json({
+          message: "reqbody Validation failed",
+          errors: error.errors,
+        });
+      }
 
-      const { email, oldPassword } = req.body;
+      const { id } = req.params;
+      const { name, email, default_currency } = req.body;
 
-      const user = await User.findByPk(req.userId);
+      if (!name && !email && !default_currency) {
+        return res.status(400).json({
+          message:
+            "one field is required: name, email, or default_currency",
+        });
+      }
 
-      if (email) {
+      const user = await User.findByPk(id);
+
+      if (!user) {
+        return res.status(404).json({
+          message: "User not found",
+        });
+      }
+
+      if (email && email !== user.email) {
         const userExists = await User.findOne({
           where: { email },
         });
 
-        if (userExists) throw new BadRequestError();
+        if (userExists) {
+          return res.status(409).json({
+            message: "Email is already in use",
+          });
+        }
       }
 
-      if (oldPassword && !(await user.checkPassword(oldPassword)))
-        throw new UnauthorizedError();
+      await user.update({
+        name: name || user.name,
+        email: email || user.email,
+        default_currency: default_currency
+          ? default_currency.toUpperCase()
+          : user.default_currency,
+      });
 
-      const newUser = await user.update(req.body);
-
-      return res.status(200).json(newUser);
+      return res.status(200).json({
+        message: "User profile updated successfully",
+        data: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          default_currency: user.default_currency,
+          updated_at: user.updated_at,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -142,16 +192,24 @@ let userController = {
   delete: async (req, res, next) => {
     try {
       const { id } = req.params;
+
       const user = await User.findByPk(id);
-      if (!user) throw new BadRequestError();
 
-      user.destroy();
+      if (!user) {
+        return res.status(404).json({
+          message: "User not found",
+        });
+      }
 
-      return res.status(200).json({ msg: "Deleted" });
+      await user.destroy();
+
+      return res.status(200).json({
+        message: "User deleted successfully",
+      });
     } catch (error) {
       next(error);
     }
   },
-};
+}
 
 export default userController;

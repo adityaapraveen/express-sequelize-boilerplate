@@ -7,16 +7,16 @@ class User extends Model {
       {
         name: Sequelize.STRING,
         email: Sequelize.STRING,
-        password: Sequelize.VIRTUAL, //When it is VIRTUAL it does not exist in the database
+        password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
+        default_currency: Sequelize.STRING,
       },
       {
         sequelize,
-        timestamps: true, //If it's false do not add the attributes (updatedAt, createdAt).
-        //paranoid: true, //If it's true, it does not allow deleting from the bank, but inserts column deletedAt. Timestamps need be true.
-        //underscored: true, //If it's true, does not add camelcase for automatically generated attributes, so if we define updatedAt it will be created as updated_at.
-        //freezeTableName: false, //If it's false, it will use the table name in the plural. Ex: Users
-        //tableName: 'Users' //Define table name
+        tableName: "users",
+        underscored: true,
+        paranoid: true,
+        deletedAt: "deleted_at",
       }
     );
 
@@ -30,10 +30,43 @@ class User extends Model {
   }
 
   static associate(models) {
-    this.belongsToMany(models.Address, {
-      through: "UserAddress",
-      foreignKey: "userId",
-    });
+    if (models.Expense) {
+      this.hasMany(models.Expense, {
+        foreignKey: "paid_by_user_id",
+        as: "paidExpenses",
+      });
+
+      this.hasMany(models.Expense, {
+        foreignKey: "created_by_user_id",
+        as: "createdExpenses",
+      });
+    }
+
+    if (models.ExpenseMember) {
+      this.hasMany(models.ExpenseMember, {
+        foreignKey: "user_id",
+        as: "expenseMemberships",
+      });
+    }
+
+    if (models.Balance) {
+      this.hasMany(models.Balance, {
+        foreignKey: "user_id",
+        as: "balances",
+      });
+
+      this.hasMany(models.Balance, {
+        foreignKey: "counterparty_user_id",
+        as: "counterpartyBalances",
+      });
+    }
+
+    if (models.ExpenseActivity) {
+      this.hasMany(models.ExpenseActivity, {
+        foreignKey: "actor_user_id",
+        as: "activities",
+      });
+    }
   }
 
   checkPassword(password) {
