@@ -5,7 +5,7 @@ A simple Splitwise-style backend built with Node.js, Express, Sequelize, and MyS
 This project supports user management, expenses, expense members, and balance viewing.
 
 [I HAVE USED THE BOILERPLATE REPO PROVIDED IN THE DOCS]
-
+[POSTMAN COLLECTION FILE - postman.json]
 ---
 
 ## Tech Stack
